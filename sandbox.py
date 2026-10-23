@@ -1,12 +1,12 @@
 import pandas as pd
-import numpy.random as np
+import numpy as np
 
 dates = pd.date_range(start='2024-01-01', periods=10, freq='B')
 print(dates)
 
-np.random.seed(42)
+rng = np.random.default_rng(42)
+returns = rng.normal(loc = 0.0005, scale=0.01, size=10)  # daily returns
 
-returns = np.random.normal(loc=0.0005, scale=0.01, size=10)  # daily returns
 prices = 100 * np.cumprod(1 + returns)
 priceseries = pd.Series(prices, index=dates, name='close')
 print(priceseries)
@@ -25,3 +25,12 @@ df = pd.DataFrame({
     'volume': np.random.randint(1000, 10000, size=10)
 }, index=dates)
 print(df)
+
+weekly = df.resample('W').agg({
+    'open': 'first',
+    'high': 'max',
+    'low': 'min',
+    'close': 'last',
+    'volume': 'sum'
+})
+print(weekly)
